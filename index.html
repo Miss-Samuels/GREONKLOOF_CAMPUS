@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Groenkloof Interactive Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+        body { margin: 0; }
+        #map { height: 100vh; }
+
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 8px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .home { background: green; color: white; }
+        .not-home { background: red; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <button class="home" onclick="setMode('home')">Home (Red)</button>
+    <button class="not-home" onclick="setMode('notHome')">Not Home (Green)</button>
+</div>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    // Start map at Groenkloof, Pretoria
+    var map = L.map('map').setView([-25.773, 28.233], 16);
+
+    // Map tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © OpenStreetMap'
+    }).addTo(map);
+
+    var mode = "home";
+
+    function setMode(selectedMode) {
+        mode = selectedMode;
+    }
+
+    // Custom icons
+    var redIcon = new L.Icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        iconSize: [32, 32]
+    });
+
+    var greenIcon = new L.Icon({
+        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+        iconSize: [32, 32]
+    });
+
+    // Add pins on click
+    map.on('click', function(e) {
+        var icon = (mode === "home") ? redIcon : greenIcon;
+
+        L.marker(e.latlng, { icon: icon }).addTo(map)
+            .bindPopup(mode === "home" ? "Home" : "Not Home")
+            .openPopup();
+    });
+</script>
+
+</body>
+</html>
